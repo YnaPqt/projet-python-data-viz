@@ -4,9 +4,10 @@ import seaborn as sns
 from src.models import engine
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+import os
 
-filepath = "../data/"
-
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "data")
 
 
 ##### Groupement des joueurs par catégorie de Draft
@@ -32,7 +33,12 @@ def resume_performance(df):
         net_rating = ("net_rating", "mean"),
         ts_pct = ("ts_pct", "mean"),
         gp = ("gp", "mean"),
+        oreb_pct = ("oreb_pct", "mean"),
+        dreb_pct = ("dreb_pct", "mean"),
+        ast_pct = ("ast_pct", "mean"),
+        usg_pct = ("usg_pct", "mean"),
         draft_number = ("draft_number", "first")
+
 
     ).reset_index()
 
@@ -44,7 +50,7 @@ def resume_performance(df):
 
 ##### Création du Scout Score
 # Normalisation des métricues avec MinMaxScaler 
-def calcul_scout_score(df, metrics=["efficiency", "ast", "availability", "reb"]):
+def calcul_scout_score(df, metrics=["efficiency", "ast","oreb_pct","dreb_pct","usg_pct", "ast_pct","availability", "reb"]):
 
     df_result = df.copy()
     # Normaliser avc MinMaxScaler
@@ -60,11 +66,11 @@ def calcul_scout_score(df, metrics=["efficiency", "ast", "availability", "reb"])
 def graph_correlation_heatmap(df, columns=None):
 
     if columns is None:
-        columns = ['pts', 'reb', 'ast', 'net_rating', 'ts_pct', 'efficiency', 'availability', 'scout_score']
+        columns = [ 'reb', 'ast','oreb_pct','ts_pct','dreb_pct', 'efficiency','ast_pct', 'availability', 'scout_score']
     
     corr_matrix = df[columns].corr()
     fig, ax = plt.subplots(figsize=(8, 5))
-    #fig = plt.figure(figsize=(10,8))
+    #fig = plt.figure(figsize=(10,5))
     
     heatmap = sns.heatmap(
         corr_matrix,
@@ -75,6 +81,7 @@ def graph_correlation_heatmap(df, columns=None):
         linewidths=1,
         linecolor="white",
         ax=ax
+        
     )
     ax.set_title("Heatmap des Corrélations de performance", fontsize=12, fontweight="bold", pad=10)
     plt.xticks(rotation=45, ha="right")
@@ -82,7 +89,7 @@ def graph_correlation_heatmap(df, columns=None):
     return fig
 
     ## OPTION pour sauvegarder le graphique
-    #graph_heatmap = f"{filepath}/graph_heatmap"
+    #graph_heatmap = f"{DB_PATH}/graph_heatmap"
     #plt.savefig(graph_heatmap, dpi=150)
     #plt.show()
     #print("graph_correlation_heatmap sauvegardé dans /data/")
@@ -113,8 +120,8 @@ def graph_efficiency_by_group(df):
 
     return fig
 
-
-    #graph_efficiency_by_group = f"{filepath}/graph_efficiency_by_group "
+    ## OPTION pour sauvegarder le graphique
+    #graph_efficiency_by_group = f"{DB_PATH}/graph_efficiency_by_group "
     #plt.savefig(graph_efficiency_by_group , dpi=150)
     #print("graph_efficiency_by_group sauvegardé dans /data/")
 
@@ -142,9 +149,10 @@ def graph_net_rating_by_group(df):
     plt.xlabel('Groupe de Draft', fontsize=12)
 
     plt.tight_layout()
-
     return fig
-    #graph_net_rating_by_group= f"{filepath}/graph_net_rating_by_group "
+
+    ## OPTION pour sauvegarder le graphique
+    #graph_net_rating_by_group= f"{DB_PATH}/graph_net_rating_by_group "
     #plt.savefig(graph_net_rating_by_group , dpi=150)
     #print("graph_efficiency_by_group sauvegardé dans /data/")
 
@@ -175,7 +183,9 @@ def graph_availability_by_group(df):
     plt.tight_layout()
 
     return fig
-    #graph_availability_by_group = f"{filepath}/graph_availability_by_group"
+
+ ## OPTION pour sauvegarder le graphique
+    #graph_availability_by_group = f"{DB_PATH}/graph_availability_by_group"
     #plt.savefig(graph_availability_by_group, dpi=150)
     #plt.show()
     #print("graph_net_rating_by_group sauvegardé dans /data/")
@@ -253,8 +263,6 @@ def graph_scout_score_distribution(df):
     return fig
 
 
-
-
 ### DETECTION DES HIDDEN GEMS et BUSTS
 #  Hidden Gems : Draft tardive (>15) mais top performance.
 #  Busts : Top 15 draft mais bottom  performance.
@@ -273,8 +281,9 @@ def detect_hidden_gems(df):
     # Identification des groupes
     df_hidden_gems = df_grouped[(df_grouped["draft_number"] > 15) & (df_grouped["scout_score"] >= high_threshold)]
     df_hidden_gems = df_hidden_gems.sort_values("scout_score", ascending = False)
+
     # Sauvegarde en CSV incluse dans la fonction
-    #hidden_gems.to_csv(f"{filepath}/hidden_gems.csv", index=False)
+    #hidden_gems.to_csv(f"{DB_PATH}/hidden_gems.csv", index=False)
 
     return df_hidden_gems
 
@@ -286,13 +295,14 @@ def detect_busts(df):
         "draft_number": "first"
     }).reset_index()
 
-    # Calcul des seuils
+    # Calcul du seuil < 25% de performance avec scout score
     low_threshold = df_grouped["scout_score"].quantile(0.25)
 
     # Identification du groupe
     df_busts = df_grouped[(df_grouped["draft_number"] <= 15) & (df_grouped["scout_score"] <= low_threshold) & (df_grouped["draft_number"] > 0)]
     df_busts = df_busts.sort_values("scout_score", ascending = False)
+
     # Sauvegarde en CSV incluse dans la fonction
-    #busts.to_csv(f"{filepath}/busts.csv", index=False)
+    #busts.to_csv(f"{DB_PATH}/busts.csv", index=False)
 
     return df_busts

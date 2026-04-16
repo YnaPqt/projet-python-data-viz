@@ -1,8 +1,12 @@
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_PATH = os.path.join(BASE_DIR, "data", "nbaplayers.db")
 
 engine = create_engine(
-    "sqlite:///../data/nbaplayers.db"
+    f"sqlite:///{DB_PATH}"
 )
 
 Base = declarative_base()
