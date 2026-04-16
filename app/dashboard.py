@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 import streamlit as st
 from streamlit_option_menu import option_menu
@@ -16,14 +17,15 @@ from gems_menu import  show_gems_busts_page
 
 from auth import login, logout
 
+###############################
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "data", "all_seasons.csv")
 
 ###############################
 
 st.set_page_config(
-    layout="wide",
-    page_title=" Analyses Draft NBA",
-    initial_sidebar_state="expanded")
-
+    layout="wide")
 
 #############################
 if "authenticated" not in st.session_state:
@@ -41,7 +43,7 @@ logout()
 
 def run_init_pipeline():
      init_db()
-     df = load_csv("../data/all_seasons.csv")
+     df = load_csv(f"{DB_PATH}")
      df = clean_data(df)
      save_to_db(df)
 
@@ -51,7 +53,7 @@ def load_data() -> pd.DataFrame:
       df_db['draft_group'] = df_db['draft_number'].apply(assign_draft_group)
 
       df_resume_perf = resume_performance(df_db)
-      metrics_list = ['efficiency', 'ast', 'availability', 'reb']
+      metrics_list = ["efficiency", "ast","oreb_pct","dreb_pct","usg_pct", "ast_pct","availability", "reb"]
       df_resume_perf= calcul_scout_score(df_resume_perf, metrics_list)
 
       return df_resume_perf

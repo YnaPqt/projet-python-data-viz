@@ -2,9 +2,6 @@ import streamlit as st
 import pandas as pd
 from src.exploration import graph_correlation_heatmap,graph_efficiency_by_group, graph_availability_by_group, graph_net_rating_by_group
 
-st.set_page_config(
-    layout="wide",
-     initial_sidebar_state="expanded")
 
 def show_analyse_page(df: pd.DataFrame):
     st.title("NBA Draft Analyses")
@@ -29,20 +26,20 @@ def show_analyse_page(df: pd.DataFrame):
 
     with col_b:
         st.subheader("Efficacité par Draft Group")
-        st.write(f"efficacdsggggggggggggggggggggggggdgdf gdsggdfdggfhfhh dgfdhhhdgfdgfh ggfdf dsggf sdggglkbb npodopofd igofghofihgggggggité")
         fig_efficiency =graph_efficiency_by_group(df)
         st.pyplot(fig_efficiency)
+        st.write(f"efficacdsggggggggggggggggggggggggdgdf gdsggdfdggfhfhh dgfdhhhdgfdgfh ggfdf dsggf sdggglkbb npodopofd igofghofihgggggggité")
 
     st.divider()
 
     col_a, col_b = st.columns(2)
     with col_a:
-        st.subheader("Net Rating by Draft Group")
+        st.subheader("Net Rating par Draft Group")
         fig_net_rating=graph_net_rating_by_group(df)
         st.pyplot(fig_net_rating)
 
     with col_b:
-        st.subheader("Availability by Draft Group")
+        st.subheader("Disponibilité par Draft Group")
         fig_availability =graph_availability_by_group(df)
         st.pyplot(fig_availability)
 

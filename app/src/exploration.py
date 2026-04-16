@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import plotly.express as px
 import seaborn as sns
-from src.models import engine
+from app.src.models import engine
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import os

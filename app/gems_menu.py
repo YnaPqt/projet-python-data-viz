@@ -19,5 +19,5 @@ def show_gems_busts_page(df: pd.DataFrame):
 
     st.divider()
 
-    st.subheader("❌ Busts")
+    st.subheader("❌ Draft Busts")
     st.dataframe(df_busts, use_container_width=True)

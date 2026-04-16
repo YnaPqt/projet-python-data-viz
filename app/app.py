@@ -4,12 +4,16 @@ from src.models import engine, init_db
 from src.exploration import * 
 from src.import_data import save_to_db
 
+import os 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "data", "all_seasons.csv")
+
 def main():
     init_db()
 
     # Charger les données
     try:
-        df = load_csv("../data/all_seasons.csv")
+        df = load_csv(f"{DB_PATH}")
     except Exception as e:
         print(f"Erreur lors du chargement du fichier")
         return
@@ -47,7 +51,8 @@ def main():
     graph_seasonal_performance(df_resume_perf)
 
     # Lis hidden gems et Busts dans les groupes de Draft
-    detect_hidden_gems_and_busts(df_resume_perf)
+    detect_hidden_gems(df_resume_perf)
+    detect_busts(df_resume_perf)
 
     # Graphique Draft Vs Scout Score
     graph_scout_score_distribution(df_resume_perf)

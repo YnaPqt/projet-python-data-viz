@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # Charger les variables d'environnement
 load_dotenv()
 
-# Récupérer les credentials
+# Récupérer l'username et le mot de passe
 USERNAME = os.getenv("APP_USERNAME")
 PASSWORD_HASH = os.getenv("APP_PASSWORD")
 

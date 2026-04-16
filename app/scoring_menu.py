@@ -2,9 +2,6 @@ import streamlit as st
 import pandas as pd
 from src.exploration import graph_seasonal_performance, graph_performance_vs_draft, graph_scout_score_distribution
 
-st.set_page_config(
-    layout="wide",
-     initial_sidebar_state="expanded")
 
 def show_scoring_page(df: pd.DataFrame):
     st.title("NBA Draft Analyses")
