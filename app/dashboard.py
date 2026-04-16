@@ -1,4 +1,8 @@
 from pathlib import Path
+import sys
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(ROOT_DIR))
+
 import os
 
 import streamlit as st
@@ -17,11 +21,10 @@ from gems_menu import  show_gems_busts_page
 
 from auth import login, logout
 
+
 ###############################
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "data", "all_seasons.csv")
-
+DB_PATH = ROOT_DIR / "data" / "all_seasons.csv"
 ###############################
 
 st.set_page_config(

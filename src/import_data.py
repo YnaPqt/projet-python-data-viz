@@ -1,4 +1,4 @@
-from app.src.models import Player, engine
+from src.models import Player, engine
 
 def save_to_db(df):
 
