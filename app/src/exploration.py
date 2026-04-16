@@ -63,8 +63,8 @@ def graph_correlation_heatmap(df, columns=None):
         columns = ['pts', 'reb', 'ast', 'net_rating', 'ts_pct', 'efficiency', 'availability', 'scout_score']
     
     corr_matrix = df[columns].corr()
-
-    plt.figure(figsize=(10,8))
+    fig, ax = plt.subplots(figsize=(8, 5))
+    #fig = plt.figure(figsize=(10,8))
     
     heatmap = sns.heatmap(
         corr_matrix,
@@ -73,12 +73,13 @@ def graph_correlation_heatmap(df, columns=None):
         center=0,
         square=True,
         linewidths=1,
-        linecolor="white"
+        linecolor="white",
+        ax=ax
     )
-    plt.title("Heatmap des Corrélations de performance", fontsize=16, fontweight="bold", pad=20)
+    ax.set_title("Heatmap des Corrélations de performance", fontsize=12, fontweight="bold", pad=10)
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
-    plt.show()
+    return fig
 
     ## OPTION pour sauvegarder le graphique
     #graph_heatmap = f"{filepath}/graph_heatmap"
@@ -92,11 +93,10 @@ def graph_efficiency_by_group(df):
     # Analyse de l'efficacité par Group de Draft
     efficiency_by_group = df.groupby("draft_group")["efficiency"].mean().sort_values(ascending=False)
 
-    plt.figure(figsize=(10,6))
-
+    fig = plt.figure(figsize=(10,6))
     ax = sns.barplot(
         x=efficiency_by_group.index,
-        y=efficiency_by_group.valuers,
+        y=efficiency_by_group.values,
         palette="mako",
         hue=efficiency_by_group.index, 
         legend=True
@@ -109,12 +109,14 @@ def graph_efficiency_by_group(df):
     plt.ylabel("Efficiency (pts * ts_pct)", fontsize=12)
     plt.xlabel("Groupe de Draft", fontsize=12)
     plt.ylim(0, efficiency_by_group.max() * 1.15)
-
     plt.tight_layout
-    graph_efficiency_by_group = f"{filepath}/graph_efficiency_by_group "
-    plt.savefig(graph_efficiency_by_group , dpi=150)
-    plt.show()
-    print("graph_efficiency_by_group sauvegardé dans /data/")
+
+    return fig
+
+
+    #graph_efficiency_by_group = f"{filepath}/graph_efficiency_by_group "
+    #plt.savefig(graph_efficiency_by_group , dpi=150)
+    #print("graph_efficiency_by_group sauvegardé dans /data/")
 
 #### Graphique : Net Rating par groupe de draft
 def graph_net_rating_by_group(df):
@@ -122,7 +124,7 @@ def graph_net_rating_by_group(df):
     # Analyse du Net Rating par Groupe de Draft
     net_rating_by_group = df.groupby('draft_group')['net_rating'].mean().sort_values(ascending=True)
 
-    plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(10, 6))
 
     ax = sns.barplot(
         x=net_rating_by_group.index, 
@@ -141,10 +143,10 @@ def graph_net_rating_by_group(df):
 
     plt.tight_layout()
 
-    graph_net_rating_by_group= f"{filepath}/graph_net_rating_by_group "
-    plt.savefig(graph_net_rating_by_group , dpi=150)
-    plt.show()
-    print("graph_efficiency_by_group sauvegardé dans /data/")
+    return fig
+    #graph_net_rating_by_group= f"{filepath}/graph_net_rating_by_group "
+    #plt.savefig(graph_net_rating_by_group , dpi=150)
+    #print("graph_efficiency_by_group sauvegardé dans /data/")
 
 
 ##### Graphique: Distribution Games Played par Groupe de Draft
@@ -153,7 +155,7 @@ def graph_availability_by_group(df):
     # Analyse de la Disponibilité par Groupe de Draft
     availability_by_group = df.groupby('draft_group')['availability'].mean().sort_values(ascending=False)
 
-    plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(10, 6))
 
     ax = sns.barplot(
         x=availability_by_group.index, 
@@ -172,10 +174,11 @@ def graph_availability_by_group(df):
 
     plt.tight_layout()
 
-    graph_availability_by_group = f"{filepath}/graph_availability_by_group"
-    plt.savefig(graph_availability_by_group, dpi=150)
-    plt.show()
-    print("graph_net_rating_by_group sauvegardé dans /data/")
+    return fig
+    #graph_availability_by_group = f"{filepath}/graph_availability_by_group"
+    #plt.savefig(graph_availability_by_group, dpi=150)
+    #plt.show()
+    #print("graph_net_rating_by_group sauvegardé dans /data/")
 
 
 def graph_seasonal_performance(df):
@@ -211,15 +214,13 @@ def graph_seasonal_performance(df):
             dtick=2
         )
     )
-    filepath = f"../data/graph_seasonal_performance.html"
-    fig.write_html(filepath)
-    fig.show()
+    return fig
     
 # Graphique: Scatter plot Performance Vs Draft
 def graph_performance_vs_draft(df):
 
     seuil = df["scout_score"].quantile(0.75)
-    plt.figure(figsize=(12, 6))
+    fig = plt.figure(figsize=(12, 8))
     sns.scatterplot(
         data=df, 
         x='draft_number', 
@@ -231,15 +232,12 @@ def graph_performance_vs_draft(df):
     plt.title('Performance vs Position de Draft')
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    graph_performance_vs_draft = f"{filepath}/graph_performance_vs_draft.png"
-    plt.savefig(graph_performance_vs_draft, dpi=150)
-    print("graph_performance_vs_draft sauvegardé dans /data/")
-    plt.show()
+    return fig
     
 
 ### Graphique Boxplot sur la distribution de scout score
 def graph_scout_score_distribution(df):
-    plt.figure(figsize=(12, 6))
+    fig = plt.figure(figsize=(12, 8))
     sns.boxplot(
         data=df, 
         x='draft_group', 
@@ -252,12 +250,7 @@ def graph_scout_score_distribution(df):
     plt.ylabel('Scout Score')
     plt.xlabel('Draft Group')
     plt.tight_layout()
-
-    graph_scout_score_distribution = f"{filepath}/graph_scout_score_distribution"
-
-    plt.savefig(graph_scout_score_distribution, dpi=150)
-    plt.show()
-    print("graph_scout_score_distribution sauvegardé dans /data/")
+    return fig
 
 
 
@@ -266,7 +259,7 @@ def graph_scout_score_distribution(df):
 #  Hidden Gems : Draft tardive (>15) mais top performance.
 #  Busts : Top 15 draft mais bottom  performance.
 
-def detect_hidden_gems_and_busts(df):
+def detect_hidden_gems(df):
 
     # Grouper par joueur
     df_grouped = df.groupby(["player_name", "draft_group"]).agg({
@@ -276,15 +269,30 @@ def detect_hidden_gems_and_busts(df):
 
     # Calcul des seuils
     high_threshold = df_grouped["scout_score"].quantile(0.75)
-    low_threshold = df_grouped["scout_score"].quantile(0.25)
 
     # Identification des groupes
-    hidden_gems = df_grouped[(df_grouped["draft_number"] > 15) & (df_grouped["scout_score"] >= high_threshold)]
-    busts = df_grouped[(df_grouped["draft_number"] <= 15) & (df_grouped["scout_score"] <= low_threshold) & (df_grouped["draft_number"] > 0)]
-
+    df_hidden_gems = df_grouped[(df_grouped["draft_number"] > 15) & (df_grouped["scout_score"] >= high_threshold)]
+    df_hidden_gems = df_hidden_gems.sort_values("scout_score", ascending = False)
     # Sauvegarde en CSV incluse dans la fonction
-    hidden_gems.to_csv(f"{filepath}/hidden_gems.csv", index=False)
-    busts.to_csv(f"{filepath}/busts.csv", index=False)
+    #hidden_gems.to_csv(f"{filepath}/hidden_gems.csv", index=False)
 
-    return hidden_gems, busts, high_threshold, low_threshold
+    return df_hidden_gems
 
+def detect_busts(df):
+
+    # Grouper par joueur
+    df_grouped = df.groupby(["player_name", "draft_group"]).agg({
+        "scout_score": "mean",
+        "draft_number": "first"
+    }).reset_index()
+
+    # Calcul des seuils
+    low_threshold = df_grouped["scout_score"].quantile(0.25)
+
+    # Identification du groupe
+    df_busts = df_grouped[(df_grouped["draft_number"] <= 15) & (df_grouped["scout_score"] <= low_threshold) & (df_grouped["draft_number"] > 0)]
+    df_busts = df_busts.sort_values("scout_score", ascending = False)
+    # Sauvegarde en CSV incluse dans la fonction
+    #busts.to_csv(f"{filepath}/busts.csv", index=False)
+
+    return df_busts

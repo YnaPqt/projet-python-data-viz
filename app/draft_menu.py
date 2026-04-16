@@ -1,7 +1,10 @@
 import streamlit as st
 
+
+
 def show_draft_page():
-    st.title("Comment fonctionne la Draft NBA?")
+
+    st.title("Draft NBA : Comment ça fonctionne?")
 
     st.markdown("""
 La **draft NBA** est un événement annuel où les 30 équipes sélectionnent de nouveaux joueurs issus du basket universitaire ou international.
@@ -37,7 +40,6 @@ La position de draft influence fortement :
 - Les attentes de performance  
 - Les opportunités de développement  
 
-Cependant, tous les meilleurs joueurs ne sont pas forcément sélectionnés en premier.
+Cependant, tous les meilleurs joueurs ne sont pas forcément sélectionnés en premier.......
 
-👉 C’est exactement ce que nous analysons dans ce projet.
 """)

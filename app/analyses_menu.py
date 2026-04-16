@@ -1,29 +1,52 @@
 import streamlit as st
 import pandas as pd
-from src.exploration import assign_draft_group,resume_performance,calcul_scout_score,graph_correlation_heatmap,graph_efficiency_by_group, graph_net_rating_by_group, graph_net_rating_by_group, graph_availability_by_group
+from src.exploration import graph_correlation_heatmap,graph_efficiency_by_group, graph_availability_by_group, graph_net_rating_by_group
 
+st.set_page_config(
+    layout="wide",
+     initial_sidebar_state="expanded")
 
 def show_analyse_page(df: pd.DataFrame):
     st.title("NBA Draft Analyses")
     st.markdown("Distribution d'analyse de performance par groupe de Draft.")
+    st.write("Groupes de Draft : **Top 15 Picks**, **Mid Picks**, **Late Picks**, **Undrafted/Unknown**")
 
     # KPI metrics row
     col1, col2, col3 = st.columns(3)
-    col1.metric("Total Players", len(df))
-    col2.metric("Avg Scout Score", f"{df['scout_score'].mean():.2f}")
-    col3.metric("Draft Groups", df["draft_group"].nunique())
+    col1.metric("Nombre total de joueurs", len(df))
+    col2.metric("Moyenne Générale de Scout Score", f"{df['scout_score'].mean():.2f}")
+    col3.metric("Nombre de Groupes de Draft", df["draft_group"].nunique())
+    
+    # Charts
+    st.divider()
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.subheader("Correlation heatmap")
+        fig_heatmap = graph_correlation_heatmap(df)
+        st.pyplot(fig_heatmap)
+        st.write("efficacité")
+
+    with col_b:
+        st.subheader("Efficacité par Draft Group")
+        st.write(f"efficacdsggggggggggggggggggggggggdgdf gdsggdfdggfhfhh dgfdhhhdgfdgfh ggfdf dsggf sdggglkbb npodopofd igofghofihgggggggité")
+        fig_efficiency =graph_efficiency_by_group(df)
+        st.pyplot(fig_efficiency)
 
     st.divider()
 
-    # Charts
     col_a, col_b = st.columns(2)
     with col_a:
         st.subheader("Net Rating by Draft Group")
-        graph_net_rating_by_group(df)   # returns a fig → use st.plotly_chart / st.pyplot
+        fig_net_rating=graph_net_rating_by_group(df)
+        st.pyplot(fig_net_rating)
 
     with col_b:
         st.subheader("Availability by Draft Group")
-        graph_availability_by_group(df)
+        fig_availability =graph_availability_by_group(df)
+        st.pyplot(fig_availability)
 
-    st.subheader("Raw Data")
+    st.divider()
+    
+    st.subheader("Table de joueurs NBA")
     st.dataframe(df, use_container_width=True)
