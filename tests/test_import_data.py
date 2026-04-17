@@ -1,6 +1,6 @@
 import pandas as pd
 from unittest.mock import patch
-from app.src.import_data import save_to_db
+from src.import_data import save_to_db
 
 
 def test_save_to_db_calls_to_sql():

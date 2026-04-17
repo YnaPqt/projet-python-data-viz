@@ -69,7 +69,6 @@ def graph_correlation_heatmap(df, columns=None):
     
     corr_matrix = df[columns].corr()
     fig, ax = plt.subplots(figsize=(8, 5))
-    #fig = plt.figure(figsize=(10,5))
     
     heatmap = sns.heatmap(
         corr_matrix,
@@ -99,7 +98,7 @@ def graph_efficiency_by_group(df):
     # Analyse de l'efficacité par Group de Draft
     efficiency_by_group = df.groupby("draft_group")["efficiency"].mean().sort_values(ascending=True)
 
-    fig = plt.figure(figsize=(10,6))
+    fig = plt.figure(figsize=(10,8))
     ax = sns.barplot(
         x=efficiency_by_group.index,
         y=efficiency_by_group.values,
@@ -118,11 +117,6 @@ def graph_efficiency_by_group(df):
     plt.tight_layout
 
     return fig
-
-    ## OPTION pour sauvegarder le graphique
-    #graph_efficiency_by_group = f"{DB_PATH}/graph_efficiency_by_group "
-    #plt.savefig(graph_efficiency_by_group , dpi=150)
-    #print("graph_efficiency_by_group sauvegardé dans /data/")
 
 #### Graphique : Rebounds par groupe de draft
 def graph_rebounds_by_group(df):

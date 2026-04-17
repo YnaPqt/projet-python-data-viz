@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from app.src.exploration import (
+from src.exploration import (
     assign_draft_group,
     resume_performance,
     calcul_scout_score,

@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from app.src.data_processing import clean_data
+from src.data_processing import clean_data
 
 
 def create_sample_df():

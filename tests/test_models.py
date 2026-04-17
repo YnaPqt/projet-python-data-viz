@@ -1,7 +1,6 @@
 import pytest
 from sqlalchemy import inspect
-
-from app.src.models import Base, engine, Session, User, Player, init_db
+from src.models import Base, engine, Session, User, Player, init_db
 
 
 @pytest.fixture(scope="module")
