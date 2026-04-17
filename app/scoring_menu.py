@@ -17,12 +17,10 @@ def show_scoring_page(df: pd.DataFrame):
         st.subheader("Draft Vs Scout Score")
         fig_score_draft =graph_scout_score_distribution(df)
         st.pyplot(fig_score_draft, use_container_width=True)
-        st.write(f"efficacdsgggggggggggggggggggité")
     with col_b:
         st.subheader("Performance des joueurs par Scout Score")
         fig_perf_draft = graph_performance_vs_draft(df)
         st.pyplot(fig_perf_draft)
-        st.write("efficacité")
 
     st.divider()
 
