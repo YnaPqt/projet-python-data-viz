@@ -31,15 +31,15 @@ st.set_page_config(
     layout="wide")
 
 #############################
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
+#if "authenticated" not in st.session_state:
+#    st.session_state["authenticated"] = False
 
-if not st.session_state["authenticated"]:
-    login()
-    st.stop()
+#if not st.session_state["authenticated"]:
+#    login()
+#    st.stop()
 
 # Logout button
-logout()
+#logout()
 
 
 ############################
@@ -51,12 +51,13 @@ def run_init_pipeline():
      save_to_db(df)
 
 @st.cache_data
-def load_data() -> pd.DataFrame:
+def load_data():
       df_db = pd.read_sql("SELECT * FROM players", engine)
       df_db['draft_group'] = df_db['draft_number'].apply(assign_draft_group)
 
       df_resume_perf = resume_performance(df_db)
-      metrics_list = ["efficiency", "ast","oreb_pct","dreb_pct","usg_pct", "ast_pct","availability", "reb"]
+
+      metrics_list = ["efficiency", "ast","oreb_pct","dreb_pct","availability"]
       df_resume_perf= calcul_scout_score(df_resume_perf, metrics_list)
 
       return df_resume_perf

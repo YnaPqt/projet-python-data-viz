@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from src.exploration import graph_correlation_heatmap,graph_efficiency_by_group, graph_availability_by_group, graph_net_rating_by_group
+from src.exploration import graph_correlation_heatmap,graph_efficiency_by_group, graph_availability_by_group, graph_rebounds_by_group
 
 
 def show_analyse_page(df: pd.DataFrame):
@@ -22,21 +22,19 @@ def show_analyse_page(df: pd.DataFrame):
         st.subheader("Correlation heatmap")
         fig_heatmap = graph_correlation_heatmap(df)
         st.pyplot(fig_heatmap)
-        st.write("efficacité")
 
     with col_b:
         st.subheader("Efficacité par Draft Group")
         fig_efficiency =graph_efficiency_by_group(df)
         st.pyplot(fig_efficiency)
-        st.write(f"efficacdsggggggggggggggggggggggggdgdf gdsggdfdggfhfhh dgfdhhhdgfdgfh ggfdf dsggf sdggglkbb npodopofd igofghofihgggggggité")
 
     st.divider()
 
     col_a, col_b = st.columns(2)
     with col_a:
-        st.subheader("Net Rating par Draft Group")
-        fig_net_rating=graph_net_rating_by_group(df)
-        st.pyplot(fig_net_rating)
+        st.subheader("Rebounds par Draft Group")
+        fig_rebounds=graph_rebounds_by_group(df)
+        st.pyplot(fig_rebounds)
 
     with col_b:
         st.subheader("Disponibilité par Draft Group")

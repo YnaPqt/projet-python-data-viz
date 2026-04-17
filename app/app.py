@@ -1,13 +1,18 @@
+from pathlib import Path
+import sys
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(ROOT_DIR))
+
 import pandas as pd
 from src.data_processing import load_csv,clean_data
 from src.models import engine, init_db
 from src.exploration import * 
 from src.import_data import save_to_db
 
-import os 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "data", "all_seasons.csv")
+#####################################
+DB_PATH = ROOT_DIR / "data" / "all_seasons.csv"
 
+########################
 def main():
     init_db()
 
@@ -35,14 +40,14 @@ def main():
     df_resume_perf = resume_performance(df_db)
 
     # Appliquer le Scout Score avec la normalisation des valeurs (MinMaxScaler)
-    metrics_list = ['efficiency', 'ast', 'availability', 'reb']
+    metrics_list = ["efficiency", "ast","oreb_pct","dreb_pct","availability"]
     df_resume_perf= calcul_scout_score(df_resume_perf, metrics_list)
 
     # Graphique HeatMap
     graph_correlation_heatmap(df_resume_perf)
 
     # Graphique Comparaison Draft Group Vs net_rating
-    graph_net_rating_by_group(df_resume_perf)
+    graph_rebounds_by_group(df_resume_perf)
 
     # Graphique Comparaison Draft Group Vs Availability
     graph_availability_by_group(df_resume_perf)

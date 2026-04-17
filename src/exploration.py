@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import plotly.express as px
+import plotly.graph_objects as go
 import seaborn as sns
 from src.models import engine
 import pandas as pd
@@ -14,7 +15,7 @@ DB_PATH = os.path.join(BASE_DIR, "data")
 # Top Picks (1-15), Mid Picks (16-30), Late Picks (>30) else Undrafted
 def assign_draft_group(draft_number):
     if draft_number == 0:
-        return "Undrafted/Unknown"
+        return "Undrafted"
     elif 1 <= draft_number <= 15:
         return "Top 15 Picks"
     elif 16 <= draft_number <= 30:
@@ -30,13 +31,11 @@ def resume_performance(df):
         pts = ("pts", "mean"),
         reb = ("reb", "mean"),
         ast = ("ast", "mean"),
-        net_rating = ("net_rating", "mean"),
         ts_pct = ("ts_pct", "mean"),
         gp = ("gp", "mean"),
         oreb_pct = ("oreb_pct", "mean"),
         dreb_pct = ("dreb_pct", "mean"),
         ast_pct = ("ast_pct", "mean"),
-        usg_pct = ("usg_pct", "mean"),
         draft_number = ("draft_number", "first")
 
 
@@ -50,7 +49,7 @@ def resume_performance(df):
 
 ##### Création du Scout Score
 # Normalisation des métricues avec MinMaxScaler 
-def calcul_scout_score(df, metrics=["efficiency", "ast","oreb_pct","dreb_pct","usg_pct", "ast_pct","availability", "reb"]):
+def calcul_scout_score(df, metrics=["efficiency", "ast", "availability","oreb_pct","dreb_pct"]):
 
     df_result = df.copy()
     # Normaliser avc MinMaxScaler
@@ -66,7 +65,7 @@ def calcul_scout_score(df, metrics=["efficiency", "ast","oreb_pct","dreb_pct","u
 def graph_correlation_heatmap(df, columns=None):
 
     if columns is None:
-        columns = [ 'reb', 'ast','oreb_pct','ts_pct','dreb_pct', 'efficiency','ast_pct', 'availability', 'scout_score']
+        columns = [ "pts","ts_pct","efficiency", "ast", "availability","oreb_pct","dreb_pct", "scout_score"]
     
     corr_matrix = df[columns].corr()
     fig, ax = plt.subplots(figsize=(8, 5))
@@ -98,7 +97,7 @@ def graph_correlation_heatmap(df, columns=None):
 ##### Graphique: Comparaison d'efficacité par Draft Group
 def graph_efficiency_by_group(df):
     # Analyse de l'efficacité par Group de Draft
-    efficiency_by_group = df.groupby("draft_group")["efficiency"].mean().sort_values(ascending=False)
+    efficiency_by_group = df.groupby("draft_group")["efficiency"].mean().sort_values(ascending=True)
 
     fig = plt.figure(figsize=(10,6))
     ax = sns.barplot(
@@ -125,36 +124,38 @@ def graph_efficiency_by_group(df):
     #plt.savefig(graph_efficiency_by_group , dpi=150)
     #print("graph_efficiency_by_group sauvegardé dans /data/")
 
-#### Graphique : Net Rating par groupe de draft
-def graph_net_rating_by_group(df):
+#### Graphique : Rebounds par groupe de draft
+def graph_rebounds_by_group(df):
 
-    # Analyse du Net Rating par Groupe de Draft
-    net_rating_by_group = df.groupby('draft_group')['net_rating'].mean().sort_values(ascending=True)
+    # Analyse du Rebound par Groupe de Draft
+    rebound_by_group = (df.groupby("draft_group")[["oreb_pct", "dreb_pct"]].mean())
 
-    fig = plt.figure(figsize=(10, 6))
+    rebound_by_group["total_reb"] = rebound_by_group.mean(axis=1)
+    rebound_by_group = rebound_by_group.sort_values(by="total_reb")
 
-    ax = sns.barplot(
-        x=net_rating_by_group.index, 
-        y=net_rating_by_group.values, 
-        palette='viridis', 
-        hue=net_rating_by_group.index, 
-        legend=False
-    )
+
+    y_max = rebound_by_group[["oreb_pct", "dreb_pct"]].values.max()
+
+    fig,ax= plt.subplots(figsize=(8, 5), layout="constrained")
+
+    rebound_by_group[["oreb_pct", "dreb_pct"]].plot(kind="bar", ax=ax)
 
     for container in ax.containers:
-        ax.bar_label(container, fmt='%.3f', padding=3, fontsize=11, fontweight='bold')
+        ax.bar_label(container, fmt="%.2f", padding=1, label_type="edge")
+    
 
-    plt.title('Net Rating Moyen par Groupe de Draft', fontsize=14, pad=20)
-    plt.ylabel('Net Rating Mean', fontsize=12)
-    plt.xlabel('Groupe de Draft', fontsize=12)
+    ax.set_title('Rebonds Moyen par Groupe de Draft', fontsize=14)
+    ax.set_ylabel('Rebonds Moyen', fontsize=12)
+    ax.set_xlabel('Groupe de Draft', fontsize=12)
+    ax.set_xticklabels(rebound_by_group.index, rotation=45, ha="right")
+    ax.set_ylim(0, y_max * 1.3)
+    ax.legend(loc="upper left", ncols=2)
+    
 
-    plt.tight_layout()
+    #plt.tight_layout()
     return fig
 
-    ## OPTION pour sauvegarder le graphique
-    #graph_net_rating_by_group= f"{DB_PATH}/graph_net_rating_by_group "
-    #plt.savefig(graph_net_rating_by_group , dpi=150)
-    #print("graph_efficiency_by_group sauvegardé dans /data/")
+
 
 
 ##### Graphique: Distribution Games Played par Groupe de Draft
@@ -163,7 +164,7 @@ def graph_availability_by_group(df):
     # Analyse de la Disponibilité par Groupe de Draft
     availability_by_group = df.groupby('draft_group')['availability'].mean().sort_values(ascending=False)
 
-    fig = plt.figure(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(8, 5))
 
     ax = sns.barplot(
         x=availability_by_group.index, 
@@ -176,9 +177,9 @@ def graph_availability_by_group(df):
     for container in ax.containers:
         ax.bar_label(container, fmt='%.3f', padding=5, fontsize=11, fontweight='bold')
 
-    plt.title('Disponibilité Moyenne par Groupe de Draft', fontsize=14, pad=20)
-    plt.ylabel('Availability (GP / 82)', fontsize=12)
-    plt.ylim(0, 1)
+    ax.set_title('Disponibilité Moyenne par Groupe de Draft', fontsize=14)
+    ax.set_ylabel('Availability (GP / 82)', fontsize=12)
+    ax.set_ylim(0, 1)
 
     plt.tight_layout()
 
@@ -209,12 +210,12 @@ def graph_seasonal_performance(df):
         y='scout_score',
         color='draft_group',
         markers=True,
-        title='Évolution de la Performance (Scout Score) par Année et Groupe de Draft',
+        title='Évolution de la Performance (Scout Score) par Saison et Groupe de Draft',
         labels={'scout_score': 'Score de Scout Moyen', 'season': 'Saison', 'draft_group': 'Groupe de Draft'}
     )
 
     fig.update_layout(
-        xaxis_title='Saison (Année de début)',
+        xaxis_title='Saison',
         yaxis_title='Score de Scout Moyen',
         legend_title='Groupe de Draft',
         hovermode='x unified',
@@ -306,3 +307,91 @@ def detect_busts(df):
     #busts.to_csv(f"{DB_PATH}/busts.csv", index=False)
 
     return df_busts
+
+
+def player_global_performance(df, player_name):
+    metrics = ["efficiency", "ast", "availability", "oreb_pct", "dreb_pct"]
+
+    # Raw player data
+    df_player_raw = df[df["player_name"] == player_name].copy()
+
+    if df_player_raw.empty:
+        raise ValueError(f"No data found for player: {player_name}")
+
+    # Aggregated per season
+    df_player = (
+        df_player_raw
+        .groupby(["season", "draft_group"])[metrics]
+        .mean()
+        .reset_index()
+    )
+
+    draft_group = df_player_raw["draft_group"].iloc[0]
+
+    # KPI
+    kpis = df_player[metrics].mean().to_dict()
+
+    # Evolution chart
+    df_melted = df_player.melt(
+        id_vars="season",
+        value_vars=metrics,
+        var_name="metric",
+        value_name="value"
+    )
+
+    fig_evolution = px.line(
+        df_melted,
+        x="season",
+        y="value",
+        color="metric",
+        markers=True,
+        title=f"Évolution des performances - {player_name}"
+    )
+
+    fig_evolution.update_layout(
+        xaxis_title="Saison",
+        yaxis_title="Performance",
+        hovermode="x unified"
+    )
+
+    # Comparison
+    player_eff = df_player_raw["efficiency"].mean()
+    group_eff = df[df["draft_group"] == draft_group]["efficiency"].mean()
+
+    df_compare = pd.DataFrame({
+        "Type": ["Player", "Draft Group Avg"],
+        "Efficiency": [player_eff, group_eff]
+    })
+
+    fig_bar = px.bar(
+        df_compare,
+        x="Type",
+        y="Efficiency",
+        color="Type",
+        title="Comparaison Efficiency",
+        text="Efficiency"
+    )
+
+    fig_bar.update_traces(
+    texttemplate="%{text:.2f}",
+    textposition="outside"
+    )
+    fig_bar.update_layout()
+
+    # Radar
+    values = [df_player[m].mean() for m in metrics]
+
+    fig_radar = go.Figure()
+    fig_radar.add_trace(go.Scatterpolar(
+        r=values,
+        theta=metrics,
+        fill='toself',
+        name=player_name
+    ))
+
+    fig_radar.update_layout(
+        polar=dict(radialaxis=dict(visible=True)),
+        title="Profil du joueur"
+    )
+
+    return kpis, fig_evolution, fig_bar, fig_radar

@@ -25,13 +25,7 @@ def clean_data(df:pd.DataFrame)-> pd.DataFrame:
     df["draft_year"] = df["draft_year"].astype(int)
     df["draft_number"] = df["draft_number"].astype(int)
     df["draft_round"] = df["draft_round"].astype(int)
-
-    def extract_start_year(season_str):
-        return int(season_str[:4]) 
-
-    # Extraire que l'année
-    df["season"] = df["season"].apply(extract_start_year)
-    df["season"] = df["season"].astype(int)
+    df["season"] = df["season"].astype(str)
 
     print(f"Doublons supprimés: {initial-len(df)}")
     return df

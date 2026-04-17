@@ -41,7 +41,7 @@ class Player(Base):
     draft_round = Column(Integer)
     draft_number = Column(Integer)
 
-    season = Column(Integer)
+    season = Column(String(50))
     team_abbreviation = Column(String(10))
     age = Column(Integer)
 
