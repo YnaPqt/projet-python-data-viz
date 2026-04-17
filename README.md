@@ -100,11 +100,11 @@ Raw Data → Cleaning → Feature Engineering → Scoring → Insights
 
 * Visualisations des performances par groupe de draft
 
-![alt text](../image.png)
+![alt text](data/image.png)
 
-![alt text](../image-1.png)
+![alt text](data/image-1.png)
 
-![alt text](../image-2.png)
+![alt text](data/image-2.png)
 
 ### 🧮 Scout Scoring
 
