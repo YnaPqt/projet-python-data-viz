@@ -182,5 +182,5 @@ Ce projet met en évidence que :
 ---
 
 ## 👤 Auteur
-
+R. Pequet
 Projet réalisé dans le cadre d’un projet data / analyse NBA.
